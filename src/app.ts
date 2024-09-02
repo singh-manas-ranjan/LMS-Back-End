@@ -37,6 +37,7 @@ import { studentRouter } from "./routes/student.routes";
 import { instructorRouter } from "./routes/instructor.routes";
 import { adminAccessRouter } from "./routes/adminAccess.routes";
 import { commonRouter } from "./routes/common.routes";
+import { verificationRouter } from "./routes/verificationToken.routes";
 
 //routes declaration
 app.use("/api/v1/admin", adminRouter);
@@ -46,5 +47,7 @@ app.use("/api/v1/students", studentRouter);
 app.use("/api/v1/instructors", instructorRouter);
 
 app.use("/api/v1", commonRouter);
+
+app.use("/api/v1/password-reset-tokens", verificationRouter);
 
 export { app };

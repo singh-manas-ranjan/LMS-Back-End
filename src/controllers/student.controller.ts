@@ -352,6 +352,29 @@ const getStudentById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+const getStudentByEmail = async (req: AuthenticatedRequest, res: Response) => {
+  const email = req.params.email;
+  try {
+    const student = await Student.findOne({ email })
+      .select("-password")
+      .populate("enrolledCourses")
+      .exec();
+    if (!student) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Student Not Found" });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Student found successfully",
+      body: student,
+    });
+  } catch (error) {
+    console.error(`ERROR!! getStudentById: ${error}`);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 const updatePassword = async (req: AuthenticatedRequest, res: Response) => {
   console.log("Inside Update Password method");
 
@@ -394,4 +417,5 @@ export {
   updateAvatar,
   getStudentById,
   updatePassword,
+  getStudentByEmail,
 };
