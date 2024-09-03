@@ -12,6 +12,7 @@ import {
   updateAvatar,
   updatePassword,
   getStudentByEmail,
+  resetPassword,
 } from "../controllers/student.controller";
 import { upload } from "../middlewares/multer.middleware";
 import { verifyJWT } from "../middlewares/auth.middleware";
@@ -28,6 +29,7 @@ studentRouter.route("/avatar/:id").patch(upload.single("avatar"), updateAvatar);
 studentRouter.route("/:id").patch(updateStudent);
 studentRouter.route("/:id").delete(deleteStudent);
 studentRouter.route("/:email").get(getStudentByEmail);
+studentRouter.route("/reset-password").post(resetPassword);
 
 studentRouter.route("/logout").post(verifyJWT, logout);
 studentRouter.route("/password").post(verifyJWT, updatePassword);

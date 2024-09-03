@@ -3,12 +3,7 @@ import Student, { TStudent } from "../models/student.models";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { generateAccessAndRefreshToken } from "../utils/TokenCreation";
-import {
-  COOKIE_DOMAIN,
-  HTTP_ONLY_COOKIE,
-  SAME_SITE,
-  SECURE_COOKIE,
-} from "../config";
+import { HTTP_ONLY_COOKIE, SAME_SITE, SECURE_COOKIE } from "../config";
 
 const registerStudent = async (req: Request, res: Response) => {
   const { firstName, lastName, email, username, password, phone }: TStudent =
@@ -404,6 +399,28 @@ const updatePassword = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+const resetPassword = async (req: Request, res: Response) => {
+  const { id, password } = req.body;
+  try {
+    const student = await Student.findById(id).exec();
+    if (!student) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Student Not Found" });
+    }
+    student.password = password;
+    await student.save({ validateBeforeSave: false });
+    return res
+      .status(200)
+      .json({ success: true, message: "Password Reset Successfully" });
+  } catch (error) {
+    console.log(`Error!! in resetPassword ${error}`);
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal Server Error" });
+  }
+};
+
 export {
   registerStudent,
   studentLogin,
@@ -417,5 +434,6 @@ export {
   updateAvatar,
   getStudentById,
   updatePassword,
+  resetPassword,
   getStudentByEmail,
 };

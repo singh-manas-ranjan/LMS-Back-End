@@ -10,6 +10,8 @@ import {
   updateInstructor,
   logout,
   updatePassword,
+  resetPassword,
+  getInstructorByEmail,
 } from "../controllers/instructor.controller";
 
 import { upload } from "../middlewares/multer.middleware";
@@ -24,6 +26,9 @@ instructorRouter.route("/:id").delete(deleteInstructor);
 instructorRouter.route("/profile/:id").get(getInstructorProfile);
 instructorRouter.route("/courses/:id").get(getPublishedCourses);
 instructorRouter.route("/:id").patch(updateInstructor);
+instructorRouter.route("/:email").get(getInstructorByEmail);
+instructorRouter.route("/reset-password").post(resetPassword);
+
 instructorRouter
   .route("/avatar/:id")
   .patch(upload.single("avatar"), updateAvatar);

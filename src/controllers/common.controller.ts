@@ -6,7 +6,6 @@ import {
   HTTP_ONLY_COOKIE,
   SECURE_COOKIE,
   SAME_SITE,
-  COOKIE_DOMAIN,
 } from "../config";
 import Admin from "../models/admin.models";
 import Instructor from "../models/instructor.models";

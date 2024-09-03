@@ -3,12 +3,7 @@ import Instructor, { TInstructor } from "../models/instructor.models";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import { generateAccessAndRefreshToken } from "../utils/TokenCreation";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
-import {
-  COOKIE_DOMAIN,
-  HTTP_ONLY_COOKIE,
-  SAME_SITE,
-  SECURE_COOKIE,
-} from "../config";
+import { HTTP_ONLY_COOKIE, SAME_SITE, SECURE_COOKIE } from "../config";
 
 const registerInstructor = async (req: Request, res: Response) => {
   const { firstName, lastName, email, username, password, phone }: TInstructor =
@@ -355,6 +350,51 @@ const getInstructorById = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+const getInstructorByEmail = async (req: Request, res: Response) => {
+  const email = req.params.email;
+  try {
+    const instructor = await Instructor.findOne({ email })
+      .select("-password")
+      .populate("publishedCourses")
+      .exec();
+    if (!instructor) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Instructor Not Found" });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Instructor found successfully",
+      body: instructor,
+    });
+  } catch (error) {
+    console.error(`ERROR!! getInstructorByEmail: ${error}`);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+const resetPassword = async (req: Request, res: Response) => {
+  const { id, password } = req.body;
+  try {
+    const instructor = await Instructor.findById(id).exec();
+    if (!instructor) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Instructor Not Found" });
+    }
+    instructor.password = password;
+    await instructor.save({ validateBeforeSave: false });
+    return res
+      .status(200)
+      .json({ success: true, message: "Password Reset Successfully" });
+  } catch (error) {
+    console.log(`Error!! in resetPassword ${error}`);
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal Server Error" });
+  }
+};
+
 export {
   registerInstructor,
   instructorLogin,
@@ -367,4 +407,6 @@ export {
   logout,
   updatePassword,
   getInstructorById,
+  getInstructorByEmail,
+  resetPassword,
 };

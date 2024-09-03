@@ -32,7 +32,7 @@ const createVerificationToken = async (req: Request, res: Response) => {
   }
 };
 
-const getVerificationToken = async (req: Request, res: Response) => {
+const getVerificationTokenByEmail = async (req: Request, res: Response) => {
   const { email } = req.params;
 
   try {
@@ -51,7 +51,30 @@ const getVerificationToken = async (req: Request, res: Response) => {
       body: verificationToken,
     });
   } catch (error) {
-    console.log(`ERROR!! getVerificationToken: ${error}`);
+    console.log(`ERROR!! getVerificationTokenByEmail: ${error}`);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+const getVerificationTokenByToken = async (req: Request, res: Response) => {
+  const { token } = req.params;
+
+  try {
+    const verificationToken = await VerificationToken.findOne({ token });
+
+    if (!verificationToken) {
+      return res.status(404).json({
+        success: false,
+        message: "Verification Token Not Found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Verification Token Found",
+      body: verificationToken,
+    });
+  } catch (error) {
+    console.log(`ERROR!! getVerificationTokenByToken: ${error}`);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
@@ -79,6 +102,7 @@ const deleteVerificationToken = async (req: Request, res: Response) => {
 
 export {
   createVerificationToken,
-  getVerificationToken,
+  getVerificationTokenByEmail,
+  getVerificationTokenByToken,
   deleteVerificationToken,
 };
